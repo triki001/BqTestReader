@@ -1,11 +1,17 @@
 package com.reader.bqtestreader;
 
+import com.reader.core.AppKey;
+import com.reader.core.ConnectionHandler;
+import com.reader.core.Debug;
+
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,19 +21,20 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class BqTestReader extends Activity implements
+public class BqDropBoxLogin extends Activity implements
 		ActionBar.OnNavigationListener {
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
 	 * current dropdown position.
 	 */
+	
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
-
+	private ConnectionHandler c_handler;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_bq_test_reader);
+		setContentView(R.layout.activity_bq_dropbox_login);
 
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getActionBar();
@@ -43,8 +50,14 @@ public class BqTestReader extends Activity implements
 								getString(R.string.title_section1),
 								getString(R.string.title_section2),
 								getString(R.string.title_section3), }), this);
+		
+		//Empezamos...
+		c_handler = ConnectionHandler.getInstance(this.getApplicationContext());
+		c_handler.init();
+		c_handler.linkAccount((Activity)this);
 	}
 
+	
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
@@ -92,6 +105,22 @@ public class BqTestReader extends Activity implements
 		return true;
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    if (requestCode == ConnectionHandler.getRequestResultCode()) {
+	        if (resultCode == Activity.RESULT_OK) 
+	        {
+	            Log.i(Debug.TAG,"> ssdOK.");
+	            Intent intent = new Intent(this, BqDropBoxListBooks.class);
+	            startActivity(intent);
+	        } else {
+	            // ... Link failed or was cancelled by the user.
+	        }
+	    } else {
+	        super.onActivityResult(requestCode, resultCode, data);
+	    }
+	}
+	
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
@@ -119,7 +148,7 @@ public class BqTestReader extends Activity implements
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_bq_test_reader,
+			View rootView = inflater.inflate(R.layout.fragment_bq_dropbox_login,
 					container, false);
 			TextView textView = (TextView) rootView
 					.findViewById(R.id.section_label);
@@ -127,6 +156,7 @@ public class BqTestReader extends Activity implements
 					ARG_SECTION_NUMBER)));
 			return rootView;
 		}
+		
 	}
 
 }
