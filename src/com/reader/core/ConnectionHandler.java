@@ -57,7 +57,7 @@ public class ConnectionHandler
 		catch(ConfigurationMismatchException ex)
 		{
 			Log.e(Debug.TAG,"Error. No se pudo inicializar el account manager.");
-			isReady = true;
+			isReady = false;
 		}
 		
 		return isReady;
@@ -81,7 +81,6 @@ public class ConnectionHandler
 	{
 		if(acc_manager.hasLinkedAccount())
 		{
-			Log.i(Debug.TAG,"> LIIIIIIIIIIIIINKED");
 			return true;
 		}
 		return false;
