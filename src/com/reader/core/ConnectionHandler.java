@@ -9,6 +9,8 @@ package com.reader.core;
  * 
  * Hemos utilizado el patron "Singleton" para asegurarnos de que solo existe una instancia en toda la APP.
  * Asi mismo, podemos utilizarla en cualquier punto de la APP.
+ * 
+ * Added by: Javier Rodriguez.
  */
 
 import com.dropbox.sync.android.DbxAccount;
@@ -78,7 +80,10 @@ public class ConnectionHandler
 	public boolean isAlreadyLinked()
 	{
 		if(acc_manager.hasLinkedAccount())
+		{
+			Log.i(Debug.TAG,"> LIIIIIIIIIIIIINKED");
 			return true;
+		}
 		return false;
 	}
 	

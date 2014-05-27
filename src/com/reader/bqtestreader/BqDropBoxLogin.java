@@ -57,6 +57,18 @@ public class BqDropBoxLogin extends Activity implements
 		c_handler.linkAccount((Activity)this);
 	}
 
+	/*
+	 * Si cuando vuelve a recuperar el control de la interfaz no estamos "conectados"
+	 * Entonces significa que, o bien hemos vuelto atras de la otra Activity (la de mostrar los libros)
+	 * O bien el login no ha sido satisfactorio en cuyo caso, volveremos a recargar la pagina web
+	 * donde introducir los credenciales.
+	 */
+	protected void onRestart()
+	{
+		super.onRestart();
+		if(!c_handler.isAlreadyLinked())
+			c_handler.linkAccount((Activity)this);
+	}
 	
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -112,6 +124,7 @@ public class BqDropBoxLogin extends Activity implements
 	        {
 	            Log.i(Debug.TAG,"> ssdOK.");
 	            Intent intent = new Intent(this, BqDropBoxListBooks.class);
+	            
 	            startActivity(intent);
 	        } else {
 	            // ... Link failed or was cancelled by the user.

@@ -60,6 +60,12 @@ public class BqDropBoxListBooks extends Activity implements
 			c_handler.init();
 	}
 
+	public void onBackPressed ()
+	{
+		super.onBackPressed();
+		c_handler.unlinkAccount();
+	}
+	
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		// Restore the previously serialized current dropdown position.
