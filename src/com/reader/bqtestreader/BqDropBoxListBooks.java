@@ -2,6 +2,7 @@ package com.reader.bqtestreader;
 
 import com.reader.core.ConnectionHandler;
 import com.reader.core.Debug;
+import com.reader.core.FilesHandler;
 
 import android.app.Activity;
 import android.app.ActionBar;
@@ -29,6 +30,7 @@ public class BqDropBoxListBooks extends Activity implements
 	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
 	private ConnectionHandler c_handler;
+	private FilesHandler file_handler;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +59,17 @@ public class BqDropBoxListBooks extends Activity implements
 		
 		//Por si las moscas, nos aseguramos de que este inicializado ;-).
 		if(!c_handler.isReady())
-			c_handler.init();
+		{
+			if(!c_handler.init())
+				Debug.showToast(getApplicationContext(), getString(R.string.error_not_init_connection_handler));
+		}
+		
+		file_handler = new FilesHandler(c_handler.getDropboxAccount());
+		
+		if(!file_handler.init())
+			Debug.showToast(getApplicationContext(), getString(R.string.error_not_init_file_handler));
+		
+		file_handler.getFiles();
 	}
 
 	public void onBackPressed ()

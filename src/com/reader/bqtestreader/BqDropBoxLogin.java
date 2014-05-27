@@ -53,7 +53,9 @@ public class BqDropBoxLogin extends Activity implements
 		
 		//Empezamos...
 		c_handler = ConnectionHandler.getInstance(this.getApplicationContext());
-		c_handler.init();
+		if(!c_handler.init())
+			Debug.showToast(getApplicationContext(), getString(R.string.error_not_init_connection_handler));
+		
 		c_handler.linkAccount((Activity)this);
 	}
 
