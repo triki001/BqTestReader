@@ -3,8 +3,6 @@ package com.reader.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.widget.Toast;
-
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxException.Unauthorized;
@@ -12,6 +10,7 @@ import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
+import com.reader.file.GenericDropboxFile;
 
 /*
  * Esta clase sera la encargada de manerar los ficheros que obtengamos del directorio
@@ -25,13 +24,13 @@ public class FilesHandler
 	private DbxAccount account;
 	private DbxFileSystem fs;
 	private boolean isReady;
-	private ArrayList<DbxFileInfo> files;
+	private ArrayList<GenericDropboxFile> files;
 	
 	public FilesHandler(DbxAccount account)
 	{
 		this.account = account;
 		isReady = false;
-		files = new ArrayList<DbxFileInfo>();
+		files = new ArrayList<GenericDropboxFile>();
 	}
 	
 	public boolean init()
@@ -78,7 +77,7 @@ public class FilesHandler
 				if(file.isFolder)
 					list(new DbxPath(path,file.path.getName()));
 				else
-					files.add(file);
+					files.add(new GenericDropboxFile(file));
 			}
 		} 
 		catch (InvalidPathException e) 
@@ -99,17 +98,16 @@ public class FilesHandler
 	 * como se va a mostrar la informacion.
 	 */
 	
-	public ArrayList<DbxFileInfo> getFiles()
+	public ArrayList<GenericDropboxFile> getFiles()
 	{
 		int iCt = 0,iSize;
-		DbxFileInfo file;
-		String aux = "";
+		GenericDropboxFile file;
 		
 		//eliminamos todos los elementos del array.
 		files.clear();
 		
 		//empezamos a buscar.
-		list(new DbxPath("/"));
+		list(DbxPath.ROOT);
 		
 		/*
 		 * Cargamos en una variable cuantos elementos hay dentro del array.
@@ -127,20 +125,10 @@ public class FilesHandler
 		
 		for(iCt=0;iCt<iSize;iCt++)
 		{
-			aux = "* ";
 			file = files.get(iCt);
-			
-			if(file.path.getParent() == null)
-				aux += "/";
-			else
-				aux += file.path.getParent();
-			
-			aux += "/"+file.path.getName();
-			
-			Debug.i(aux);
+			Debug.i("* "+file.getName()+" mod: "+file.getModifiedDate()+" ("+file.getModifiedDateAsUnixTimestamp()+")");
 		}
 		
 		return files;
 	}
-	
 }
