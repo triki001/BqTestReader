@@ -1,9 +1,16 @@
 package com.reader.activity;
 
+import java.util.ArrayList;
+
 import com.reader.bqtestreader.R;
 import com.reader.core.ConnectionHandler;
 import com.reader.core.Debug;
 import com.reader.core.FilesHandler;
+import com.reader.criteria.AbstractCriteria;
+import com.reader.criteria.CriteriaFactory;
+import com.reader.exception.InvalidCriteriaException;
+import com.reader.file.GenericDropboxFile;
+import com.reader.shorter.FileShorter;
 
 import android.app.Activity;
 import android.app.ActionBar;
@@ -56,7 +63,16 @@ public class ListBooksActivity extends Activity implements
 		Log.i(Debug.TAG,"> ListBooks onCreate()");
 		
 		//Recuperamos la instancia.
-		c_handler = ConnectionHandler.getInstance(this.getApplicationContext());
+		c_handler = ConnectionHandler.getInstance(this.getApplicationContext());	
+	}
+
+	public void onResume()
+	{
+		super.onResume();
+		
+		ArrayList<GenericDropboxFile> files = null;
+		ArrayList<GenericDropboxFile> ordered_files = null;
+		AbstractCriteria criteria = null;
 		
 		//Por si las moscas, nos aseguramos de que este inicializado ;-).
 		if(!c_handler.isReady())
@@ -70,9 +86,21 @@ public class ListBooksActivity extends Activity implements
 		if(!file_handler.init())
 			Debug.showToast(getApplicationContext(), getString(R.string.error_not_init_file_handler));
 		
-		file_handler.getFiles();
+		//Obtenemos la lista de ficheros.
+		files = file_handler.getFiles();
+		FilesHandler.print_information_files(files);
+		try 
+		{
+			criteria = CriteriaFactory.getShortCriteria(CriteriaFactory.BY_DATE);
+			ordered_files = FileShorter.do_short(files, criteria);
+			FilesHandler.print_information_files(ordered_files);
+		} 
+		catch (InvalidCriteriaException e) 
+		{
+			Debug.showToast(getApplicationContext(), e.getMessage());
+		}
 	}
-
+	
 	public void onBackPressed ()
 	{
 		super.onBackPressed();
