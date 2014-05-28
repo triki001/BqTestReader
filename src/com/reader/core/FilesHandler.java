@@ -65,7 +65,7 @@ public class FilesHandler
 	 * 
 	 * TODO: Introducir la funcion recursiva dentro de un hilo.
 	 */
-	private void list(DbxPath path)
+	private void scan_dir(DbxPath path)
 	{
 		List<DbxFileInfo> list;
 		try 
@@ -75,7 +75,7 @@ public class FilesHandler
 			for(DbxFileInfo file : list)
 			{
 				if(file.isFolder)
-					list(new DbxPath(path,file.path.getName()));
+					scan_dir(new DbxPath(path,file.path.getName()));
 				else
 					files.add(new GenericDropboxFile(file));
 			}
@@ -99,15 +99,31 @@ public class FilesHandler
 	 */
 	
 	public ArrayList<GenericDropboxFile> getFiles()
-	{
-		int iCt = 0,iSize;
-		GenericDropboxFile file;
-		
+	{		
 		//eliminamos todos los elementos del array.
 		files.clear();
 		
 		//empezamos a buscar.
-		list(DbxPath.ROOT);
+		scan_dir(DbxPath.ROOT);
+
+		return files;
+	}
+	
+	/*
+	 * Muestra la informacion de los ficheros almacenados en el artibuto files.
+	 * Si se desea utilizar este metodo y que efectivamente muestre informacion
+	 * debemos ejecutar previamente el metodo getFiles().
+	 */
+	
+	public void print_information_files()
+	{
+		print_information_files(this.files);
+	}
+	
+	public static void print_information_files(ArrayList<GenericDropboxFile> list_files)
+	{
+		int iCt = 0,iSize;
+		GenericDropboxFile file;
 		
 		/*
 		 * Cargamos en una variable cuantos elementos hay dentro del array.
@@ -116,7 +132,7 @@ public class FilesHandler
 		 * se evalua la condicion del bucle for.
 		 */
 		
-		iSize = files.size();
+		iSize = list_files.size();
 		
 		//Una vez terminamos de buscar. Mostramos lo recuperado.
 		//Esto es solo para debug.
@@ -125,10 +141,8 @@ public class FilesHandler
 		
 		for(iCt=0;iCt<iSize;iCt++)
 		{
-			file = files.get(iCt);
+			file = list_files.get(iCt);
 			Debug.i("* "+file.getName()+" mod: "+file.getModifiedDate()+" ("+file.getModifiedDateAsUnixTimestamp()+")");
 		}
-		
-		return files;
 	}
 }
