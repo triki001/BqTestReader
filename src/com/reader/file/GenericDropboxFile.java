@@ -3,6 +3,7 @@ package com.reader.file;
 import java.util.Date;
 
 import com.dropbox.sync.android.DbxFileInfo;
+import com.dropbox.sync.android.DbxPath;
 
 /*
  * Clase define un tipo de fichero generico. La idea de hacer una clase
@@ -44,7 +45,7 @@ public class GenericDropboxFile
 	 */
 	public String getPath()
 	{
-		return dbx_file.path.getName();
+		return dbx_file.path.getParent().toString();
 	}
 	
 	/*
@@ -76,5 +77,14 @@ public class GenericDropboxFile
 	public String getModifiedDateAsUnixTimestamp()
 	{
 		return ""+dbx_file.modifiedTime.getTime();
+	}
+	
+	/*
+	 * Funcion que carga, utilizando el API de Dropbox, el nombre del fichero.
+	 * Esto lo necesitamos cuando abrimos el fichero epub.
+	 */
+	public DbxPath getFileAsPath()
+	{
+		return dbx_file.path;
 	}
 }
