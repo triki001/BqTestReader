@@ -1,5 +1,6 @@
-package com.reader.bqtestreader;
+package com.reader.activity;
 
+import com.reader.bqtestreader.R;
 import com.reader.core.AppKey;
 import com.reader.core.ConnectionHandler;
 import com.reader.core.Debug;
@@ -21,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class BqDropBoxLogin extends Activity implements
+public class LoginActivity extends Activity implements
 		ActionBar.OnNavigationListener {
 
 	/**
@@ -125,7 +126,7 @@ public class BqDropBoxLogin extends Activity implements
 	        if (resultCode == Activity.RESULT_OK) 
 	        {
 	            Log.i(Debug.TAG,"> ssdOK.");
-	            Intent intent = new Intent(this, BqDropBoxListBooks.class);
+	            Intent intent = new Intent(this, ListBooksActivity.class);
 	            
 	            startActivity(intent);
 	        } else {

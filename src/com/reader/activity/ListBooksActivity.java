@@ -1,5 +1,6 @@
-package com.reader.bqtestreader;
+package com.reader.activity;
 
+import com.reader.bqtestreader.R;
 import com.reader.core.ConnectionHandler;
 import com.reader.core.Debug;
 import com.reader.core.FilesHandler;
@@ -21,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class BqDropBoxListBooks extends Activity implements
+public class ListBooksActivity extends Activity implements
 		ActionBar.OnNavigationListener {
 
 	/**
