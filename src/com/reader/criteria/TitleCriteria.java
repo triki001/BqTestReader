@@ -15,7 +15,7 @@ public class TitleCriteria extends AbstractCriteria
 {
 	public TitleCriteria()
 	{
-		super(true);
+		super(false);
 	}
 	
 	public TitleCriteria(boolean isDescendent) 

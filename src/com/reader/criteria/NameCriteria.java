@@ -14,7 +14,7 @@ public class NameCriteria extends AbstractCriteria
 {
 	public NameCriteria()
 	{
-		super(true);
+		super(false);
 	}
 	
 	public NameCriteria(boolean isDescendent) 

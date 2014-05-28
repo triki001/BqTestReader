@@ -14,7 +14,7 @@ public class DateCriteria extends AbstractCriteria
 {
 	public DateCriteria()
 	{
-		super(true);
+		super(false);
 	}
 	
 	public DateCriteria(boolean isDescendent) 
