@@ -76,7 +76,11 @@ public class GenericDropboxFile
 	 */
 	public String getModifiedDateAsUnixTimestamp()
 	{
-		return ""+dbx_file.modifiedTime.getTime();
+		/*
+		 * Dividimos entre 1000 para pasar de milisegundos
+		 * (formato que devuelve el metodo) a segundos.
+		 */		
+		return ""+(dbx_file.modifiedTime.getTime()/1000);
 	}
 	
 	/*
