@@ -11,9 +11,11 @@ import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
+import com.reader.criteria.AbstractCriteria;
 import com.reader.exception.RemoteFileNotOpenedException;
 import com.reader.file.EpubDropboxFile;
 import com.reader.file.GenericDropboxFile;
+import com.reader.shorter.FileShorter;
 
 /*
  * Esta clase sera la encargada de manerar los ficheros que obtengamos del directorio
@@ -91,11 +93,11 @@ public class FilesHandler
 		} 
 		catch (InvalidPathException e) 
 		{
-
+			return;
 		} 
 		catch (DbxException e) 
 		{
-
+			return;
 		}
 	}
 	
@@ -116,6 +118,26 @@ public class FilesHandler
 		scanDir(DbxPath.ROOT);
 
 		return files;
+	}
+	
+	/*
+	 * Funcion de entrada. Esta funcion obtiene todos los archivos del directorio remoto en Dropbox.
+	 * Asi mismo, devuelve los datos ya ordenados segun el criterio de ordenacion.
+	 * 
+	 * TODO: Incluir un wrapper para la clase DbxFileInfo, no es elegante utilizar esa clase
+	 * dentro del activity. Podemos introducir metodos de acceso a la clase para controlar
+	 * como se va a mostrar la informacion.
+	 */
+	
+	public ArrayList<GenericDropboxFile> getFiles(AbstractCriteria criteria)
+	{		
+		//eliminamos todos los elementos del array.
+		files.clear();
+		
+		//empezamos a buscar.
+		scanDir(DbxPath.ROOT);
+		
+		return FileShorter.do_short(files, criteria);
 	}
 	
 	/*
