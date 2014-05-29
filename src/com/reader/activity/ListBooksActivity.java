@@ -2,6 +2,7 @@ package com.reader.activity;
 
 import java.util.ArrayList;
 
+import com.reader.ui.EpubGridViewAdapter;
 import com.reader.bqtestreader.R;
 import com.reader.core.ConnectionHandler;
 import com.reader.core.Debug;
@@ -28,8 +29,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class ListBooksActivity extends Activity implements
 		ActionBar.OnNavigationListener {
@@ -39,14 +43,21 @@ public class ListBooksActivity extends Activity implements
 	 * current dropdown position.
 	 */
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+	private GridView grid_view;
 	private ConnectionHandler c_handler;
 	private FilesHandler file_handler;
+	private int item_clicks;
+	private int last_item_clicked;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_bq_drop_box_list_books);
 
+		//Inicializamos las variables que gestionaran los eventos del doble click.
+		item_clicks = 0;
+		last_item_clicked = -1;
+		
 		// Set up the action bar to show a dropdown list.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setDisplayShowTitleEnabled(false);
@@ -63,6 +74,49 @@ public class ListBooksActivity extends Activity implements
 								getString(R.string.title_section3), }), this);
 		
 		Log.i(Debug.TAG,"> ListBooks onCreate()");
+		
+		grid_view = (GridView)findViewById(R.id.gridView);
+		
+		/*
+		 * Incluimos el adaptador al gridView definido para mostrar los libros.
+		 * Los libros se mostraran con un icono generico.
+		 * 
+		 * Se incluye un listener para ser capaces de capturar el evento
+		 * de cuando se seleccione un elemento del GridView.
+		 * 
+		 * Hemos implementado el metodo del listener para que solo se pueda "activar"
+		 * cuando se ha hecho un doble click sobre el mismo icono.
+		 * 
+		 * Cuando esto ocurra, se lanzara un activity mostrando la portada del libro
+		 * seleccionado.
+		 */
+		//grid_view.setAdapter(new ImageAdapter(this));
+        grid_view.setOnItemClickListener(new OnItemClickListener() 
+        {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) 
+            {	
+            	/*
+            	 * Con esta condicion controlamos si se ha pulsado sobre
+            	 * el mismo elemento, en caso negativo, se pone el contador
+            	 * a 0. De esta forma podemos controlar que el doble click
+            	 * sea siempre sobre el mismo icono.
+            	 */
+            	if(last_item_clicked != position)
+            	{
+            		last_item_clicked = position;
+            		item_clicks = 0;
+            	}
+
+            	item_clicks++;
+            	
+            	if(item_clicks == 2) //Doble click hack ;-)
+            	{
+            		//TODO: Aqui lanzariamos el nuevo activity para mostrar la foto.
+            		Debug.i("> [debug] selected item: "+position);
+            		item_clicks = 0;
+            	}
+            }
+        });
 		
 		//Recuperamos la instancia.
 		c_handler = ConnectionHandler.getInstance(this.getApplicationContext());	
@@ -92,6 +146,9 @@ public class ListBooksActivity extends Activity implements
 		files = file_handler.getFiles();
 		FilesHandler.printInformationFiles(files);
 		
+		grid_view.setAdapter(new EpubGridViewAdapter(this, R.layout.book_grid, files));
+		
+		//Manejar la libreria epub.
 		file_handler.openFile(files.get(0));
 		EpubDropboxFile file = (EpubDropboxFile)files.get(0);
 		
@@ -102,6 +159,7 @@ public class ListBooksActivity extends Activity implements
 		Debug.i("Epub title: "+file.getTitle());
 		Debug.i("Epub front image size: "+file.getFrontImage().length+"bytes");
 		
+		//Testear los criterios de ordenacion.
 		try 
 		{
 			criteria = CriteriaFactory.getShortCriteria(CriteriaFactory.BY_DATE);
