@@ -71,6 +71,7 @@ public class EpubFileHandler
 		{
 			book = retrieveBook(files_handler,epub_file);
 			epub_file.setFrontImage(book.getCoverImage().getData());
+			files_handler.closeFile(epub_file);
 			return true;
 		}
 		catch (EpubHandlerBookException e) 
