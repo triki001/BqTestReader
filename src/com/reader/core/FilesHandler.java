@@ -6,15 +6,21 @@ import java.util.List;
 import com.dropbox.sync.android.DbxAccount;
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxException.Unauthorized;
+import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
+import com.reader.exception.RemoteFileNotOpenedException;
+import com.reader.file.EpubDropboxFile;
 import com.reader.file.GenericDropboxFile;
 
 /*
  * Esta clase sera la encargada de manerar los ficheros que obtengamos del directorio
  * remoto de dropbox. 
+ * 
+ * Dado que el account es obtenido mediante un singleton, no tiene mucho sentido utilizar
+ * un singleton aqui.
  * 
  * Added by: Javier Rodriguez.
  */
@@ -65,7 +71,7 @@ public class FilesHandler
 	 * 
 	 * TODO: Introducir la funcion recursiva dentro de un hilo.
 	 */
-	private void scan_dir(DbxPath path)
+	private void scanDir(DbxPath path)
 	{
 		List<DbxFileInfo> list;
 		try 
@@ -75,9 +81,12 @@ public class FilesHandler
 			for(DbxFileInfo file : list)
 			{
 				if(file.isFolder)
-					scan_dir(new DbxPath(path,file.path.getName()));
+					scanDir(new DbxPath(path,file.path.getName()));
 				else
-					files.add(new GenericDropboxFile(file));
+				{
+					if(EpubDropboxFile.isEpubFile(file.path.getName()))
+						files.add(new EpubDropboxFile(file));
+				}
 			}
 		} 
 		catch (InvalidPathException e) 
@@ -104,9 +113,46 @@ public class FilesHandler
 		files.clear();
 		
 		//empezamos a buscar.
-		scan_dir(DbxPath.ROOT);
+		scanDir(DbxPath.ROOT);
 
 		return files;
+	}
+	
+	/*
+	 * Esta funcion abre un fichero alojado en el directorio remoto.
+	 */
+	public boolean openFile(GenericDropboxFile g_file)
+	{
+		DbxFile file = null;
+		
+		try 
+		{
+			file = fs.open(g_file.getFileAsPath());
+			g_file.setRawDropboxFile(file);
+			return true;
+		} 
+		catch (DbxException e) 
+		{
+			return false;
+		}
+	}
+	
+	/*
+	 * Esta funcion cierra un fichero alojado en el directorio remoto.
+	 */
+	
+	public boolean closeFile(GenericDropboxFile g_file)
+	{
+		try 
+		{
+			DbxFile file = g_file.getRawDropboxFile();
+			file.close();
+			return true;
+		} 
+		catch (RemoteFileNotOpenedException e) 
+		{
+			return false;
+		}
 	}
 	
 	/*
@@ -115,12 +161,16 @@ public class FilesHandler
 	 * debemos ejecutar previamente el metodo getFiles().
 	 */
 	
-	public void print_information_files()
+	public void printInformationFiles()
 	{
-		print_information_files(this.files);
+		printInformationFiles(this.files);
 	}
 	
-	public static void print_information_files(ArrayList<GenericDropboxFile> list_files)
+	/*
+	 * Muestra la informacion de los ficheros en el parametro list_files.
+	 */
+	
+	public static void printInformationFiles(ArrayList<GenericDropboxFile> list_files)
 	{
 		int iCt = 0,iSize;
 		GenericDropboxFile file;

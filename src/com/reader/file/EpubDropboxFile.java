@@ -1,5 +1,8 @@
 package com.reader.file;
 
+import nl.siegmann.epublib.epub.EpubReader;
+
+import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 
 /*
@@ -8,45 +11,45 @@ import com.dropbox.sync.android.DbxFileInfo;
  * y metodos que tiene cualquier "file", tiene metodos especificos
  * para el manero de epubs.
  * 
- * Se va a utilizar un API especifico que he encontrado en internet
- * para el manejo de epubs y que puede ser util. 
- * 
- * La libreria esta incluida como .jar en el proyecto y el API de dicha
- * libreria esta aqui:
- * 
- * URI oficial:
- * http://www.siegmann.nl/epublib/android
- * 
- * API:
- * http://www.siegmann.nl/epublib/apidocs
- * 
- * Esta libreria requiere a su vez de otra libreria que se llama slf4j que
- * sirve para generar Log y que tambien se ha includo en el proyecto.
- * 
- * URI oficial:
- * http://www.slf4j.org/android/
- * 
- * TODO: Incluir metodos para cargar el titulo y la portada en (modo imagen).
- * 
  * Added by: Javier Rodriguez.
  */
 
 public class EpubDropboxFile extends GenericDropboxFile 
 {
 	public static final String extension = "epub";
+	private String title;
+	private byte[] front_image;
 	
 	public EpubDropboxFile(DbxFileInfo file) 
 	{
 		super(file);
+		title = file.path.getName();
+		front_image = null;
 	}
 
 	/*
 	 * Esta funcion, especifica de los ficheros .epub sirve para obtener el titulo del libro
 	 * guardado en ese formato. Esta funcion, de momento queda por implementar.
 	 */
+	
 	public String getTitle()
 	{
-		return super.getName();
+		return title;
+	}
+	
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
+	
+	public byte[] getFrontImage()
+	{
+		return front_image;
+	}
+	
+	public void setFrontImage(byte[] img)
+	{
+		front_image = img.clone();
 	}
 	
 	public static boolean isEpubFile(String filename)

@@ -2,8 +2,10 @@ package com.reader.file;
 
 import java.util.Date;
 
+import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxPath;
+import com.reader.exception.RemoteFileNotOpenedException;
 
 /*
  * Clase define un tipo de fichero generico. La idea de hacer una clase
@@ -18,16 +20,33 @@ import com.dropbox.sync.android.DbxPath;
 
 public class GenericDropboxFile 
 {
-	private DbxFileInfo dbx_file;
+	private DbxFileInfo dbx_file_info;
+	private DbxFile dbx_file;
+	private boolean is_opened;
 	
 	public GenericDropboxFile(DbxFileInfo file)
 	{
-		this.dbx_file = file;
+		this.dbx_file_info = file;
+		is_opened = false;
 	}
 
-	protected DbxFileInfo getRawDropboxFile()
+	protected DbxFileInfo getRawDropboxFileInfo()
 	{
-		return dbx_file;
+		return dbx_file_info;
+	}
+	
+	public void setRawDropboxFile(DbxFile file)
+	{
+		this.dbx_file = file;
+		is_opened = true;
+	}
+	
+	public DbxFile getRawDropboxFile() throws RemoteFileNotOpenedException
+	{
+		if(is_opened)
+			return dbx_file;
+		else
+			throw new RemoteFileNotOpenedException();
 	}
 	
 	/*
@@ -36,7 +55,7 @@ public class GenericDropboxFile
 	 */
 	public String getName()
 	{
-		return dbx_file.path.getName();
+		return dbx_file_info.path.getName();
 	}
 	
 	/*
@@ -45,7 +64,7 @@ public class GenericDropboxFile
 	 */
 	public String getPath()
 	{
-		return dbx_file.path.getParent().toString();
+		return dbx_file_info.path.getParent().toString();
 	}
 	
 	/*
@@ -62,7 +81,7 @@ public class GenericDropboxFile
 	 */
 	public Date getModifiedDate()
 	{
-		return dbx_file.modifiedTime;
+		return dbx_file_info.modifiedTime;
 	}
 
 	/*
@@ -80,7 +99,7 @@ public class GenericDropboxFile
 		 * Dividimos entre 1000 para pasar de milisegundos
 		 * (formato que devuelve el metodo) a segundos.
 		 */		
-		return ""+(dbx_file.modifiedTime.getTime()/1000);
+		return ""+(dbx_file_info.modifiedTime.getTime()/1000);
 	}
 	
 	/*
@@ -89,6 +108,6 @@ public class GenericDropboxFile
 	 */
 	public DbxPath getFileAsPath()
 	{
-		return dbx_file.path;
+		return dbx_file_info.path;
 	}
 }
