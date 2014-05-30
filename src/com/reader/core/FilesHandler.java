@@ -21,8 +21,9 @@ import com.reader.shorter.FileShorter;
  * Esta clase sera la encargada de manerar los ficheros que obtengamos del directorio
  * remoto de dropbox. 
  * 
- * Dado que el account es obtenido mediante un singleton, no tiene mucho sentido utilizar
- * un singleton aqui.
+ * Aunque en un primer momento se decidio que esta clase no fuera singleton, debido
+ * a la refactorizacion del codigo, se ha pensado que lo mejor es hacerla singleton
+ * para que asi pueda ser mas facilmente accesible desde cualquier activity.
  * 
  * Added by: Javier Rodriguez.
  */
@@ -33,8 +34,9 @@ public class FilesHandler
 	private DbxFileSystem fs;
 	private boolean isReady;
 	private ArrayList<GenericDropboxFile> files;
+	private static FilesHandler instance = null;
 	
-	public FilesHandler(DbxAccount account)
+	private FilesHandler(DbxAccount account)
 	{
 		this.account = account;
 		isReady = false;
@@ -229,5 +231,18 @@ public class FilesHandler
 			file = list_files.get(iCt);
 			Debug.i("* "+file.getName()+" mod: "+file.getModifiedDate()+" ("+file.getModifiedDateAsUnixTimestamp()+")");
 		}
+	}
+	
+	/*
+	 * Funcion para recoger la instancia (o crearla si no existia previamente).
+	 * Metodo obligatorio en la clase singleton.
+	 */
+	
+	public static FilesHandler getInstance(DbxAccount account)
+	{
+		if(instance == null)
+			return new FilesHandler(account);
+		
+		return instance;
 	}
 }
