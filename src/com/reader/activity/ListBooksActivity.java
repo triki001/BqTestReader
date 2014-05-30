@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.dropbox.sync.android.DbxException;
 import com.reader.ui.EpubGridViewAdapter;
 import com.reader.bqtestreader.R;
+import com.reader.core.ApplicationCoreHandler;
 import com.reader.core.ConnectionHandler;
 import com.reader.core.Debug;
 import com.reader.core.EpubFileHandler;
@@ -123,7 +124,7 @@ public class ListBooksActivity extends Activity implements
         });
 		
 		//Recuperamos la instancia.
-		c_handler = ConnectionHandler.getInstance(this.getApplicationContext());
+        c_handler = ApplicationCoreHandler.getConnectionHandler(getApplicationContext());
 		
 		//Por si las moscas, nos aseguramos de que este inicializado ;-).
 		if(!c_handler.isReady())
@@ -132,7 +133,7 @@ public class ListBooksActivity extends Activity implements
 				Debug.showToast(getApplicationContext(), getString(R.string.error_not_init_connection_handler));
 		}
 		
-		file_handler = new FilesHandler(c_handler.getDropboxAccount());
+		file_handler = ApplicationCoreHandler.getFilesHandler(c_handler);
 		
 		if(!file_handler.init())
 			Debug.showToast(getApplicationContext(), getString(R.string.error_not_init_file_handler));
