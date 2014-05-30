@@ -46,6 +46,14 @@ public class EpubFileHandler
 		Book book = null;
 		boolean result;
 		
+		/*
+		 * Antes de obtener los datos del libro, verificamos si ya tenemos el titulo cargado
+		 * previamente, no es necesario volver a cogerla. 
+		 */
+		
+		if(epub_file.hasTitle())
+			return true;
+		
 		try 
 		{
 			book = retrieveBook(files_handler,epub_file);
@@ -59,11 +67,11 @@ public class EpubFileHandler
 			 * cogemos como titulo el nombre del fichero pero sin extension.
 			 */
 			e.printStackTrace();
-			epub_file.setTitle(epub_file.getNameWithoutExtension());
 			result = false;
 		}
 		finally
 		{
+			//Cerramos el fichero independientemente de si ha fallado o no.
 			files_handler.closeFile(epub_file);
 		}
 		
@@ -78,6 +86,14 @@ public class EpubFileHandler
 	{
 		Book book = null;
 		boolean result;
+		
+		/*
+		 * Antes de obtener los datos del libro, verificamos si ya tenemos la imagen cargada
+		 * previamente, no es necesario volver a cogerla. 
+		 */
+		
+		if(epub_file.hastImage())
+			return true;
 		
 		try 
 		{
@@ -98,6 +114,7 @@ public class EpubFileHandler
 		}
 		finally
 		{
+			//Cerramos el fichero independientemente de si ha fallado o no.
 			files_handler.closeFile(epub_file);
 		}
 		
