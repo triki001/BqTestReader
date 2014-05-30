@@ -44,19 +44,30 @@ public class EpubFileHandler
 	public static boolean retrieveEpubTitle(FilesHandler files_handler, EpubDropboxFile epub_file)
 	{
 		Book book = null;
+		boolean result;
 		
 		try 
 		{
 			book = retrieveBook(files_handler,epub_file);
 			epub_file.setTitle(book.getTitle());
-			files_handler.closeFile(epub_file);
-			return true;
+			result = true;
 		}
 		catch (EpubHandlerBookException e) 
 		{
+			/*
+			 * En caso de que el fichero epub no tuviera, por ejemplo, titulo
+			 * cogemos como titulo el nombre del fichero pero sin extension.
+			 */
 			e.printStackTrace();
-			return false;
+			epub_file.setTitle(epub_file.getNameWithoutExtension());
+			result = false;
 		}
+		finally
+		{
+			files_handler.closeFile(epub_file);
+		}
+		
+		return result;
 	}
 	
 	/*
@@ -66,24 +77,31 @@ public class EpubFileHandler
 	public static boolean retrieveEpubFrontImage(FilesHandler files_handler, EpubDropboxFile epub_file)
 	{
 		Book book = null;
+		boolean result;
 		
 		try 
 		{
 			book = retrieveBook(files_handler,epub_file);
 			epub_file.setFrontImage(book.getCoverImage().getData());
 			files_handler.closeFile(epub_file);
-			return true;
+			result = true;
 		}
 		catch (EpubHandlerBookException e) 
 		{
 			e.printStackTrace();
-			return false;
+			result = false;
 		} 
 		catch (IOException e) 
 		{
 			e.printStackTrace();
-			return false;
+			result = false;
 		}
+		finally
+		{
+			files_handler.closeFile(epub_file);
+		}
+		
+		return result;
 	}
 	
 	/*

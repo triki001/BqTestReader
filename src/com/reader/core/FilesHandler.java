@@ -64,6 +64,15 @@ public class FilesHandler
 		return isReady;
 	}
 	
+	public boolean hasFiles()
+	{
+		if(files.size() > 0)
+			return true;
+		
+		return false;
+	}
+	
+	
 	/*
 	 * Al ser un proceso bastante lento, lo ideal seria meter esto dentro de un hilo para
 	 * que la app no proteste al quedarse demasiado tiempo sin retornar el control al 
@@ -71,7 +80,6 @@ public class FilesHandler
 	 * 
 	 * NOTA: Funcion recursiva.
 	 * 
-	 * TODO: Introducir la funcion recursiva dentro de un hilo.
 	 */
 	private void scanDir(DbxPath path)
 	{
@@ -104,9 +112,8 @@ public class FilesHandler
 	/*
 	 * Funcion de entrada. Esta funcion obtiene todos los archivos del directorio remoto en Dropbox.
 	 * 
-	 * TODO: Incluir un wrapper para la clase DbxFileInfo, no es elegante utilizar esa clase
-	 * dentro del activity. Podemos introducir metodos de acceso a la clase para controlar
-	 * como se va a mostrar la informacion.
+	 * Si se ha subido un archivo nuevo al servidor y se vuelve a llamar a la funcion, esta es capaz
+	 * de detectar que hay un nuevo fichero.
 	 */
 	
 	public ArrayList<GenericDropboxFile> getFiles()
@@ -123,10 +130,6 @@ public class FilesHandler
 	/*
 	 * Funcion de entrada. Esta funcion obtiene todos los archivos del directorio remoto en Dropbox.
 	 * Asi mismo, devuelve los datos ya ordenados segun el criterio de ordenacion.
-	 * 
-	 * TODO: Incluir un wrapper para la clase DbxFileInfo, no es elegante utilizar esa clase
-	 * dentro del activity. Podemos introducir metodos de acceso a la clase para controlar
-	 * como se va a mostrar la informacion.
 	 */
 	
 	public ArrayList<GenericDropboxFile> getFiles(AbstractCriteria criteria)
@@ -175,6 +178,16 @@ public class FilesHandler
 		{
 			return false;
 		}
+	}
+	
+	public void awaitFirstSync() throws DbxException
+	{
+		fs.awaitFirstSync();
+	}
+	
+	public void sync() throws DbxException
+	{
+		fs.syncNowAndWait();
 	}
 	
 	/*

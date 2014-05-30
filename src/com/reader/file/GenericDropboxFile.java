@@ -5,6 +5,7 @@ import java.util.Date;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxPath;
+import com.reader.core.Debug;
 import com.reader.exception.RemoteFileNotOpenedException;
 
 /*
@@ -50,12 +51,22 @@ public class GenericDropboxFile
 	}
 	
 	/*
-	 * Aqui mostramos la ruta donde esta ubicado. 
+	 * Aqui el nombre del fichero. 
 	 * Por ejemplo, si el fichero esta en /home/javier/prueba.txt devolvemos prueba.txt
 	 */
 	public String getName()
 	{
 		return dbx_file_info.path.getName();
+	}
+	
+	/*
+	 * Aqui mostramos el nombre del fichero sin extension. 
+	 * Por ejemplo, si el fichero esta en /home/javier/prueba.txt devolvemos prueba
+	 */
+	public String getNameWithoutExtension()
+	{
+		int length = dbx_file_info.path.getName().lastIndexOf(".");
+		return dbx_file_info.path.getName().substring(0, length);
 	}
 	
 	/*

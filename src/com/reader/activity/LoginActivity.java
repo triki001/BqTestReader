@@ -49,8 +49,7 @@ public class LoginActivity extends Activity implements
 						android.R.layout.simple_list_item_1,
 						android.R.id.text1, new String[] {
 								getString(R.string.title_section1),
-								getString(R.string.title_section2),
-								getString(R.string.title_section3), }), this);
+								getString(R.string.title_section2), }), this);
 		
 		//Empezamos...
 		c_handler = ConnectionHandler.getInstance(this.getApplicationContext());
