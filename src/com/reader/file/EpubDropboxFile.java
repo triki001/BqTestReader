@@ -1,6 +1,10 @@
 package com.reader.file;
 
+import java.io.Serializable;
+
 import nl.siegmann.epublib.epub.EpubReader;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
@@ -15,11 +19,16 @@ import com.reader.exception.NoImageLoadedException;
  * Added by: Javier Rodriguez.
  */
 
-public class EpubDropboxFile extends GenericDropboxFile 
+public class EpubDropboxFile extends GenericDropboxFile  implements Serializable
 {
+	/**
+	 * Implementamos el interfaz serializable porque vamos a pasar
+	 * este objeto directamente al activity para que lo dibuje.
+	 */
+	private static final long serialVersionUID = 3598534171857407845L;
 	public static final String extension = "epub";
 	private String title;
-	private byte[] front_image;
+	private Bitmap front_image;
 	private boolean real_title;
 	private boolean has_image;
 	
@@ -70,7 +79,7 @@ public class EpubDropboxFile extends GenericDropboxFile
 	 * que no existe ninguna imagen.
 	 */
 	
-	public byte[] getFrontImage() throws NoImageLoadedException
+	public Bitmap getFrontImage() throws NoImageLoadedException
 	{
 		if(has_image)
 			return front_image;
@@ -84,7 +93,7 @@ public class EpubDropboxFile extends GenericDropboxFile
 	
 	public void setFrontImage(byte[] img)
 	{
-		front_image = img.clone();
+		front_image = BitmapFactory.decodeByteArray(img, 0, img.length);
 		has_image = true;
 	}
 	
