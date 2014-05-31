@@ -1,19 +1,15 @@
 package com.reader.activity;
 
 import com.reader.bqtestreader.R;
-import com.reader.core.AppKey;
 import com.reader.core.ConnectionHandler;
 import com.reader.core.Debug;
 
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;

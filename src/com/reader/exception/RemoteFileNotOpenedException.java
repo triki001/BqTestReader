@@ -1,5 +1,13 @@
 package com.reader.exception;
 
+/*
+ * Esta excepcion se lanzara cuando la aplicacion intente
+ * abrir un fichero remoto (en este caso, un epub) y falle.
+ * 
+ * Added by: Javier Rodriguez.
+ */
+
+@SuppressWarnings("serial")
 public class RemoteFileNotOpenedException extends Exception 
 {
 	/*

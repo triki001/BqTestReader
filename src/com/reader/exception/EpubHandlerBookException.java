@@ -1,5 +1,6 @@
 package com.reader.exception;
 
+@SuppressWarnings("serial")
 public class EpubHandlerBookException extends Exception 
 {
 	/*

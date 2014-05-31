@@ -1,7 +1,5 @@
 package com.reader.core;
 
-import android.service.textservice.SpellCheckerService.Session;
-
 /*
  * Clase en la que almacenamos tanto el app_key como el app_secret.
  * Los hacemos privados para asegurarnos que la recoleccion de dichos
