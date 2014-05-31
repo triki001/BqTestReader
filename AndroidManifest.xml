@@ -50,7 +50,7 @@
             android:label="@string/title_activity_bq_drop_box_list_books" >
         </activity>
         <activity
-            android:name="com.reader.bqtestreader.BookCoverActivity"
+            android:name="com.reader.activity.BookCoverActivity"
             android:label="@string/title_activity_book_cover" >
         </activity>
     </application>
