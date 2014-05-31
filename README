@@ -1,5 +1,19 @@
 ** README **
 
-Este aplicacion de prueba ha sido creada con el fin de evaluar los conocimientos requeridos por Bq.
+Este aplicación de prueba ha sido creada con el fin de evaluar los conocimientos requeridos por Bq.
 
-Creado por: Jose Javier Rodriguez.
+Creado por: José Javier Rodríguez.
+
+La aplicación se encuentra terminada.
+
+Futuras lineas de desarollo:
+
+* Corrección de bugs.
+* Mejora en el algoritmo para sincronizar con el escritorio remoto.
+* Investigar para que el login no sea a traves de la web.
+* Hacer que no te pregunte siempre si se desea aceptar la app. (Esta documentado en la página de dropbox).
+
+NOTA:
+Durante la documentación del código, así como en los commits subidos a github he intentado no incluir ni tildes
+ni caracteres extraños. La razón de esto es que algunos editores o el mismo github podria dar algunos problemas.
+
