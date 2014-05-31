@@ -27,6 +27,8 @@ public class BookCoverActivity extends Activity
 		ImageView view = (ImageView) findViewById(R.id.imageView);			
 		image = (CoverImage) getIntent().getSerializableExtra("file");
 		raw_data = image.getImageData();
+		
+		setTitle(image.getBookTitle());
 		view.setImageBitmap(BitmapFactory.decodeByteArray(raw_data, 0, raw_data.length));
 	}
 	
