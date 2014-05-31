@@ -1,6 +1,7 @@
 package com.reader.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.dropbox.sync.android.DbxAccount;
@@ -12,6 +13,8 @@ import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.dropbox.sync.android.DbxPath.InvalidPathException;
 import com.reader.criteria.AbstractCriteria;
+import com.reader.criteria.CriteriaFactory;
+import com.reader.exception.InvalidCriteriaException;
 import com.reader.exception.RemoteFileNotOpenedException;
 import com.reader.file.EpubDropboxFile;
 import com.reader.file.GenericDropboxFile;
@@ -83,7 +86,7 @@ public class FilesHandler
 	 * NOTA: Funcion recursiva.
 	 * 
 	 */
-	private void scanDir(DbxPath path)
+	private void scanDir(ArrayList<GenericDropboxFile>files, DbxPath path)
 	{
 		List<DbxFileInfo> list;
 		try 
@@ -93,7 +96,7 @@ public class FilesHandler
 			for(DbxFileInfo file : list)
 			{
 				if(file.isFolder)
-					scanDir(new DbxPath(path,file.path.getName()));
+					scanDir(files,new DbxPath(path,file.path.getName()));
 				else
 				{
 					if(EpubDropboxFile.isEpubFile(file.path.getName()))
@@ -120,13 +123,92 @@ public class FilesHandler
 	
 	public ArrayList<GenericDropboxFile> getFiles()
 	{		
-		//eliminamos todos los elementos del array.
-		files.clear();
+		ArrayList<GenericDropboxFile> remote_files = new ArrayList<GenericDropboxFile>();
+			
+		//obtenemos los ficheros remotos.
+		scanDir(remote_files,DbxPath.ROOT);
 		
-		//empezamos a buscar.
-		scanDir(DbxPath.ROOT);
-
+		//Realizamos la sincronizacion entre local y remoto.
+		files = doSync(files,remote_files);
+		
 		return files;
+	}
+	
+	/*
+	 * Funcion que, chequea los ficheros locales y remotos y hace una comparacion entre
+	 * ambos siguiendo 3 reglas.
+	 * 
+	 * Si esta en local y remoto, se deja como esta.
+	 * Si esta en local y no esta en remoto, entonces se borra de local.
+	 * Si esta en remoto y no en local, se incluye.
+	 * 
+	 */
+	
+	public ArrayList<GenericDropboxFile> doSync(ArrayList<GenericDropboxFile> local,ArrayList<GenericDropboxFile> remote)
+	{
+		int i_ct,j_ct,j_size,i_size;
+		GenericDropboxFile file = null;
+		ArrayList<GenericDropboxFile> new_list = new ArrayList<GenericDropboxFile>();
+		
+		i_size = local.size();
+		j_size = remote.size();
+		
+		//La lista local esta vacia, todo lo que llegue de remoto sera nuevo.
+		if(local.isEmpty())
+		{
+			new_list.addAll(remote);
+			return new_list;
+		}
+		//La lista remota esta vacia, hay que borrar todos los elementos que no esten en local.
+		if(remote.isEmpty())
+		{
+			return new_list;
+		}
+		
+		//Caso general
+		for(i_ct=0;i_ct<i_size;i_ct++)
+		{
+			file = local.get(i_ct);
+			
+			//Buscamos el elemento local en la lista remota.
+			for(j_ct=0;j_ct<j_size;j_ct++)
+			{
+				if(file.getFileHash().equals(remote.get(j_ct).getFileHash()))
+					break;
+			}
+			/*
+			 * Si hemos acabado antes de terminar el bucle
+			 * Significa que ya existia en local. Asi que 
+			 * no hacemos nada en local y marcamos como "viejo"
+			 * en remoto.
+			 * 
+			 * Sino, significa que no esta ya en remoto asi que borramos
+			 * de local.
+			 */
+			
+			if(j_ct < j_size)
+			{
+				Debug.i("> [debug] Old element detect.");
+				new_list.add(file);
+				remote.get(j_ct).setUp2Date();
+			}
+		}
+		
+		/*
+		 * Todos los que no han sido marcados como nuevos anteriormente
+		 * signficaba que estaban ya en local, asi que los que ahora siguen
+		 * estando como nuevos en remoto, sera nuevo en el repositorio, asi
+		 * que directamente los metemos.
+		 */
+		for(j_ct=0;j_ct<j_size;j_ct++)
+		{
+			file = remote.get(j_ct);
+			
+			if(file.isNew())
+				new_list.add(file);
+		}
+		
+		return new_list;
 	}
 	
 	/*
@@ -136,11 +218,13 @@ public class FilesHandler
 	
 	public ArrayList<GenericDropboxFile> getFiles(AbstractCriteria criteria)
 	{		
-		//eliminamos todos los elementos del array.
-		files.clear();
+		ArrayList<GenericDropboxFile> remote_files = new ArrayList<GenericDropboxFile>();
 		
 		//empezamos a buscar.
-		scanDir(DbxPath.ROOT);
+		scanDir(remote_files,DbxPath.ROOT);
+
+		//Realizamos la sincronizacion entre local y remoto.
+		files = doSync(files,remote_files);
 		
 		return FileShorter.do_short(files, criteria);
 	}
@@ -229,7 +313,7 @@ public class FilesHandler
 		for(iCt=0;iCt<iSize;iCt++)
 		{
 			file = list_files.get(iCt);
-			Debug.i("* "+file.getName()+" mod: "+file.getModifiedDate()+" ("+file.getModifiedDateAsUnixTimestamp()+")");
+			Debug.i("* "+file.getName()+" hash: "+file.getFileHash());
 		}
 	}
 	

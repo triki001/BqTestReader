@@ -6,6 +6,7 @@ import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxPath;
 import com.reader.exception.RemoteFileNotOpenedException;
+import com.reader.util.SHA1;
 
 /*
  * Clase define un tipo de fichero generico. La idea de hacer una clase
@@ -23,11 +24,16 @@ public class GenericDropboxFile
 	private DbxFileInfo dbx_file_info;
 	private DbxFile dbx_file;
 	private boolean is_opened;
+	private String file_hash;
+	private boolean is_hashed;
+	private boolean is_new;
 	
 	public GenericDropboxFile(DbxFileInfo file)
 	{
 		this.dbx_file_info = file;
 		is_opened = false;
+		is_hashed = false;
+		is_new = true;
 	}
 
 	protected DbxFileInfo getRawDropboxFileInfo()
@@ -119,5 +125,41 @@ public class GenericDropboxFile
 	public DbxPath getFileAsPath()
 	{
 		return dbx_file_info.path;
+	}
+	
+	/*
+	 * Obtenemos el hash del fichero partiendo de su nombre completo
+	 * (ruta + nombre), de esta forma, nos aseguramos que 2 ficheros
+	 * que se llaman igual y que estan en distintas carpetas tienen
+	 * hashes diferentes.
+	 */
+	public String getFileHash()
+	{
+		if(!is_hashed)
+		{
+			file_hash = SHA1.doHash(getCanonicalName());
+			is_hashed = true;
+		}
+		
+		return file_hash;
+	}
+	
+	/*
+	 * Funcion para verificar si el fichero es nuevo o no.
+	 * Decimos que un fichero es nuevo cuando esta en remoto
+	 * y aun no se han descargado su titulo e imagen de portada.
+	 */
+	
+	public boolean isNew()
+	{
+		return is_new;
+	}
+	
+	/*
+	 * Funcion para marcar un fichero nuevo como ya actualizado.
+	 */
+	public void setUp2Date()
+	{
+		is_new = false;
 	}
 }

@@ -10,6 +10,7 @@ import com.reader.core.ConnectionHandler;
 import com.reader.core.CoverImage;
 import com.reader.core.Debug;
 import com.reader.core.EpubFileHandler;
+import com.reader.core.FileListHandler;
 import com.reader.core.FilesHandler;
 import com.reader.criteria.AbstractCriteria;
 import com.reader.criteria.CriteriaFactory;
@@ -451,18 +452,26 @@ public class ListBooksActivity extends Activity implements
 		
 		private void getEpubTitles()
 		{
-			if(file_list == null)
+			FileListHandler filel_handler = new FileListHandler(file_list);
+			ArrayList<GenericDropboxFile> new_list;
+			
+			new_list = filel_handler.getNewElements();
+			
+			if(new_list == null)
 				return;
 			
 			int i_ct;
-			int i_size = file_list.size();
+			int i_size = new_list.size();
 			
+			Debug.i("> [debug] new elements: "+new_list.size());
 			for(i_ct=0;i_ct<i_size;i_ct++)
 			{
 				publishProgress("Obteniendo libro ... "+(i_ct+1)+" de "+i_size);
 				Debug.i("> [debug] Obteniendo libro ... "+(i_ct+1)+" de "+i_size);
-				EpubFileHandler.retrieveEpubData(file_handler,(EpubDropboxFile)file_list.get(i_ct));
+				EpubFileHandler.retrieveEpubData(file_handler,(EpubDropboxFile)new_list.get(i_ct));
 			}
+			
+			filel_handler.setAllAsUpdated(file_list);
 		}
 			
 		@Override
