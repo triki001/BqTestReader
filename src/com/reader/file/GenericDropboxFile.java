@@ -5,7 +5,6 @@ import java.util.Date;
 import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxPath;
-import com.reader.core.Debug;
 import com.reader.exception.RemoteFileNotOpenedException;
 
 /*
@@ -19,7 +18,7 @@ import com.reader.exception.RemoteFileNotOpenedException;
  * Added by: Javier Rodriguez.
  */
 
-public class GenericDropboxFile 
+public class GenericDropboxFile
 {
 	private DbxFileInfo dbx_file_info;
 	private DbxFile dbx_file;

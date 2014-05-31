@@ -7,12 +7,14 @@ import com.reader.ui.EpubGridViewAdapter;
 import com.reader.bqtestreader.R;
 import com.reader.core.ApplicationCoreHandler;
 import com.reader.core.ConnectionHandler;
+import com.reader.core.CoverImage;
 import com.reader.core.Debug;
 import com.reader.core.EpubFileHandler;
 import com.reader.core.FilesHandler;
 import com.reader.criteria.AbstractCriteria;
 import com.reader.criteria.CriteriaFactory;
 import com.reader.exception.InvalidCriteriaException;
+import com.reader.exception.NoImageLoadedException;
 import com.reader.file.EpubDropboxFile;
 import com.reader.file.GenericDropboxFile;
 import com.reader.shorter.FileShorter;
@@ -118,6 +120,9 @@ public class ListBooksActivity extends Activity implements
             	{
             		//TODO: Aqui lanzariamos el nuevo activity para mostrar la foto.
             		Debug.i("> [debug] selected item: "+position);
+            		EpubDropboxFile epub_file = (EpubDropboxFile)file_list.get(position);
+            		launchCoverViewActivity(epub_file);
+            		
             		item_clicks = 0;
             	}
             }
@@ -235,6 +240,22 @@ public class ListBooksActivity extends Activity implements
 	 * 
 	 * Estas funciones encapsulan el funcionamiento de la activity.
 	 */
+	
+	private void launchCoverViewActivity(EpubDropboxFile file)
+	{		
+		try 
+		{
+			CoverImage img = file.getFrontImage();
+			Intent intent = new Intent(this, BookCoverActivity.class);
+			intent.putExtra("file",img);
+			startActivity(intent);
+		}
+		catch (NoImageLoadedException e) 
+		{
+			e.printStackTrace();
+			Debug.showToast(this.getApplicationContext(), e.getMessage());
+		}
+	}
 	
 	/*
 	 * Funcion para actualizar la vista que muestra los ficheros epub.
@@ -438,9 +459,9 @@ public class ListBooksActivity extends Activity implements
 			
 			for(i_ct=0;i_ct<i_size;i_ct++)
 			{
-				publishProgress("Obteniendo titulo ... "+(i_ct+1)+" de "+i_size);
-				Debug.i("> [debug] Obteniendo titulo ... "+(i_ct+1)+" de "+i_size);
-				EpubFileHandler.retrieveEpubTitle(file_handler,(EpubDropboxFile)file_list.get(i_ct));
+				publishProgress("Obteniendo libro ... "+(i_ct+1)+" de "+i_size);
+				Debug.i("> [debug] Obteniendo libro ... "+(i_ct+1)+" de "+i_size);
+				EpubFileHandler.retrieveEpubData(file_handler,(EpubDropboxFile)file_list.get(i_ct));
 			}
 		}
 			

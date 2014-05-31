@@ -41,7 +41,7 @@ public class EpubFileHandler
 	/*
 	 * Funcion para obtener el titulo de un fichero epub.
 	 */
-	public static boolean retrieveEpubTitle(FilesHandler files_handler, EpubDropboxFile epub_file)
+	public static boolean retrieveEpubData(FilesHandler files_handler, EpubDropboxFile epub_file)
 	{
 		Book book = null;
 		boolean result;
@@ -58,6 +58,7 @@ public class EpubFileHandler
 		{
 			book = retrieveBook(files_handler,epub_file);
 			epub_file.setTitle(book.getTitle());
+			epub_file.setFrontImage(book.getCoverImage().getData());
 			result = true;
 		}
 		catch (EpubHandlerBookException e) 
@@ -68,6 +69,14 @@ public class EpubFileHandler
 			 */
 			e.printStackTrace();
 			result = false;
+		}
+		catch(IOException e)
+		{
+			/*
+			 * En caso de que no se pudiera coger la foto..
+			 */
+			e.printStackTrace();
+			result = false;			
 		}
 		finally
 		{
